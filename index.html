@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Karnataka ST Marriage Incentive Scheme – Live Monitor</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f5f6fa;
+  --surf:#ffffff;
+  --surf2:#f9fafb;
+  --border:#e5e9f0;
+  --border2:#d1d9e6;
+  --a1:#1f7a3d;
+  --a2:#0ea5b0;
+  --a3:#7c5cbf;
+  --a4:#16a05a;
+  --a5:#d63f5c;
+  --a6:#d49000;
+  --text:#1a2035;
+  --text2:#4a5568;
+  --muted:#8a95a8;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05);
+  --shadow-lg:0 4px 24px rgba(0,0,0,.09);
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;font-size:14px}
+
+/* ── Header ── */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(16px);
+  border-bottom:1.5px solid var(--border);
+  padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  box-shadow:0 1px 0 var(--border),0 4px 20px rgba(0,0,0,.04);
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--a1) 0%,#0f4a24 100%);
+  display:grid;place-items:center;box-shadow:0 2px 8px rgba(31,122,61,.3);
+}
+.logo-text h1{font-size:.9rem;font-weight:800;color:var(--text);letter-spacing:-.01em}
+.logo-text p{font-size:.62rem;color:var(--muted);font-family:var(--mono);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.live-badge{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(22,160,90,.08);border:1.5px solid rgba(22,160,90,.2);
+  border-radius:20px;padding:4px 11px;font-size:.63rem;color:var(--a4);font-family:var(--mono);font-weight:600;
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--a4);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.5)}}
+.timer{font-size:.6rem;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.refresh-btn{
+  display:flex;align-items:center;gap:6px;
+  background:var(--text);border:none;color:#fff;
+  border-radius:8px;padding:6px 14px;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .18s;
+  box-shadow:0 2px 8px rgba(26,32,53,.2);
+}
+.refresh-btn:hover{background:#2d3a5a;transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,32,53,.28)}
+.refresh-btn:active{transform:translateY(0)}
+.refresh-btn svg{width:13px;height:13px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Main Layout ── */
+main{max-width:1800px;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px}
+
+/* ── Status Bar ── */
+.status-bar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-size:.68rem;font-family:var(--mono);color:var(--muted);
+  padding:8px 16px;background:var(--surf);border-radius:8px;border:1.5px solid var(--border);
+  box-shadow:var(--shadow);
+}
+.s-ok{color:var(--a4)}.s-err{color:var(--a5)}.s-load{color:var(--a2)}
+
+/* ── Section Labels ── */
+.section-label{
+  font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--muted);padding:0 2px;margin-bottom:-4px;
+}
+
+/* ── KPI Cards ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px}
+.kpi{
+  background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r);
+  padding:18px 18px 14px;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,border-color .2s;cursor:default;
+}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--kc,var(--a1))}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--a1));border-radius:var(--r) var(--r) 0 0}
+.kpi-lbl{font-size:.62rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-right:32px}
+.kpi-val{font-size:2rem;font-weight:800;color:var(--kc,var(--a1));line-height:1;letter-spacing:-.02em}
+.kpi-val.small{font-size:1.35rem}
+.kpi-sub{font-size:.6rem;color:var(--muted);margin-top:5px;font-family:var(--mono)}
+.kpi-ico{position:absolute;top:16px;right:14px;width:26px;height:26px;background:rgba(0,0,0,.04);border-radius:7px;display:grid;place-items:center}
+.kpi-ico svg{width:15px;height:15px;fill:none;stroke:var(--kc,var(--a1));stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Cards ── */
+.card{background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r);padding:20px;overflow:hidden;box-shadow:var(--shadow)}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px;flex-wrap:wrap}
+.card-title{font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text2)}
+.card-badge{
+  font-size:.6rem;font-family:var(--mono);font-weight:600;
+  background:var(--bg);color:var(--text2);border:1.5px solid var(--border2);
+  border-radius:20px;padding:3px 10px;
+}
+.empty{text-align:center;padding:32px;color:var(--muted);font-size:.73rem}
+
+/* ── Grid Layouts ── */
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:1024px){.g21{grid-template-columns:1fr}}
+@media(max-width:768px){.g21,.g2{grid-template-columns:1fr}}
+
+/* ── Timeline ── */
+.tl-wrap{display:flex;align-items:flex-end;gap:4px;height:130px;overflow-x:auto;padding-bottom:2px;padding-top:4px}
+.tl-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;width:24px;cursor:default;position:relative}
+.tl-bar{width:16px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--a1),#0f4a24);transition:opacity .15s,transform .15s}
+.tl-bar:hover{opacity:.75;transform:scaleY(1.04)}
+.tl-cnt{font-size:.44rem;color:var(--a1);font-family:var(--mono);font-weight:600;text-align:center;line-height:1;margin-bottom:1px;white-space:nowrap}
+.tl-lbl{font-size:.48rem;color:var(--muted);font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;text-align:center}
+
+/* ── Donut ── */
+.donut-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donut-legend{display:flex;flex-direction:column;gap:8px;flex:1;min-width:120px}
+.dl-row{display:flex;align-items:center;gap:8px}
+.dl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dl-name{font-size:.68rem;font-weight:500;flex:1;color:var(--text2)}
+.dl-val{font-size:.75rem;font-weight:700;font-family:var(--mono)}
+.dl-pct{font-size:.6rem;color:var(--muted);font-family:var(--mono)}
+
+/* ── Gap Analysis ── */
+.gap-list{display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;padding-right:4px}
+.gap-list::-webkit-scrollbar{width:4px}
+.gap-list::-webkit-scrollbar-track{background:var(--bg);border-radius:4px}
+.gap-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.gap-row{display:flex;flex-direction:column;gap:4px}
+.gap-top{display:flex;justify-content:space-between;align-items:center}
+.gap-name{font-size:.7rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;color:var(--text)}
+.gap-nums{display:flex;gap:6px;align-items:center;font-family:var(--mono);font-size:.62rem}
+.gap-done{color:var(--a4);font-weight:700}
+.gap-rem{color:var(--a5);font-weight:600}
+.gap-pct{color:var(--muted)}
+.gap-bars{display:flex;height:7px;border-radius:4px;overflow:hidden;background:rgba(0,0,0,.05)}
+.gap-filled{height:100%;transition:width .6s ease}
+.gap-empty{height:100%;background:rgba(214,63,92,.1)}
+
+/* ── Surveyor ── */
+.sv-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.sv-date-select,.sv-view-select{
+  background:var(--bg);border:1.5px solid var(--border);color:var(--text);
+  border-radius:7px;padding:5px 10px;font-family:var(--mono);font-size:.63rem;cursor:pointer;
+  flex:1;min-width:120px;font-weight:500;transition:border-color .15s;
+}
+.sv-date-select:focus,.sv-view-select:focus{border-color:var(--a2);outline:none}
+.sv-date-label{font-size:.62rem;color:var(--muted);font-family:var(--mono);white-space:nowrap;font-weight:600}
+.sv-list-scroll{max-height:360px;overflow-y:auto;padding-right:4px}
+.sv-list-scroll::-webkit-scrollbar{width:4px}
+.sv-list-scroll::-webkit-scrollbar-track{background:var(--bg);border-radius:4px}
+.sv-list-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.sv-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.sv-row:last-child{border-bottom:none}
+.sv-rank{font-size:.62rem;font-family:var(--mono);color:var(--muted);width:22px;text-align:center;flex-shrink:0;font-weight:600}
+.sv-rank.top3{color:var(--a6);font-weight:700}
+.sv-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sv-name{font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:var(--text)}
+.sv-meta{font-size:.57rem;color:var(--muted);font-family:var(--mono)}
+.sv-bar-wrap{width:70px;height:5px;background:rgba(0,0,0,.07);border-radius:3px;overflow:hidden;flex-shrink:0}
+.sv-bar{height:100%;background:linear-gradient(90deg,var(--a2),var(--a3));border-radius:3px;transition:width .5s ease}
+.sv-count{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--a2);min-width:28px;text-align:right;flex-shrink:0}
+
+/* ── Heatmap ── */
+.heatmap{display:flex;flex-wrap:wrap;gap:8px}
+.hm-chip{border-radius:9px;padding:9px 14px;cursor:default;display:flex;flex-direction:column;gap:3px;transition:transform .15s,box-shadow .15s;border:1.5px solid transparent}
+.hm-chip:hover{transform:scale(1.05);box-shadow:var(--shadow-lg)}
+.hm-name{font-size:.66rem;font-weight:600}
+.hm-val{font-size:.8rem;font-weight:700;font-family:var(--mono)}
+
+/* ── Filters ── */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filter-row select{
+  background:var(--bg);border:1.5px solid var(--border);color:var(--text);
+  border-radius:7px;padding:6px 10px;font-family:var(--mono);font-size:.65rem;cursor:pointer;
+  font-weight:500;transition:border-color .15s;
+}
+.filter-row select:focus{border-color:var(--a2);outline:none}
+
+/* ── Progress Table ── */
+.tbl-scroll{overflow-x:auto;max-height:420px;overflow-y:auto}
+.tbl-scroll::-webkit-scrollbar{width:5px;height:5px}
+.tbl-scroll::-webkit-scrollbar-track{background:var(--bg)}
+.tbl-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.ptbl{width:100%;border-collapse:collapse;font-size:.7rem}
+.ptbl thead{position:sticky;top:0;z-index:5;background:var(--surf2)}
+.ptbl th{
+  padding:9px 12px;text-align:left;font-size:.6rem;color:var(--muted);
+  text-transform:uppercase;border-bottom:2px solid var(--border);letter-spacing:.08em;
+  white-space:nowrap;font-weight:700;background:var(--surf2);
+}
+.ptbl td{padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:middle;color:var(--text)}
+.ptbl tr:hover td{background:var(--bg)}
+.ptbl tr.dist-subtotal td{
+  background:#eef7ef;
+  border-top:2px solid var(--border2);
+  border-bottom:2px solid var(--border2);
+  font-weight:700;
+  font-size:.68rem;
+}
+.ptbl tr.dist-subtotal:hover td{background:#e2f0e3}
+.dist-sub-label{
+  font-size:.56rem;font-family:var(--mono);text-transform:uppercase;
+  letter-spacing:.08em;color:var(--a3);font-weight:700;margin-left:4px;
+}
+.tier-b{font-size:.56rem;font-family:var(--mono);border-radius:5px;padding:2px 7px;font-weight:700}
+.t-H{background:rgba(31,122,61,.1);color:var(--a1)}
+.t-M{background:rgba(124,92,191,.1);color:var(--a3)}
+.t-L{background:rgba(138,149,168,.1);color:var(--muted)}
+.pbar-w{display:flex;align-items:center;gap:7px}
+.pbar{flex:1;height:6px;background:rgba(0,0,0,.07);border-radius:3px;overflow:hidden;min-width:70px}
+.pbar-f{height:100%;border-radius:3px;transition:width .6s ease}
+.pct-lbl{font-family:var(--mono);font-size:.62rem;min-width:34px;text-align:right;font-weight:600}
+
+/* ── Bad Rows Panel ── */
+.bad-panel{
+  border:1.5px solid rgba(214,63,92,.25);background:rgba(214,63,92,.03);
+  border-radius:var(--r);padding:20px;overflow:hidden;box-shadow:var(--shadow);
+}
+.bad-count{font-size:.65rem;font-family:var(--mono);display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.bc-red{color:var(--a5);background:rgba(214,63,92,.08);border:1.5px solid rgba(214,63,92,.2);border-radius:6px;padding:3px 10px;font-weight:600}
+.bc-yellow{color:var(--a6);background:rgba(212,144,0,.08);border:1.5px solid rgba(212,144,0,.2);border-radius:6px;padding:3px 10px;font-weight:600}
+.bc-note{color:var(--muted);font-size:.6rem}
+.bad-tbl{width:100%;border-collapse:collapse;font-size:.67rem}
+.bad-tbl th{padding:8px 10px;text-align:left;font-size:.57rem;color:var(--muted);text-transform:uppercase;border-bottom:2px solid var(--border);letter-spacing:.07em;white-space:nowrap;font-weight:700;background:var(--surf2)}
+.bad-tbl td{padding:7px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);vertical-align:middle;color:var(--text)}
+.bad-tbl tr:hover td{background:var(--bg)}
+.sev-red{display:inline-block;background:#d63f5c;color:#fff;border-radius:4px;padding:2px 8px;font-size:.56rem;font-weight:700;letter-spacing:.04em}
+.sev-yellow{display:inline-block;background:#d49000;color:#fff;border-radius:4px;padding:2px 8px;font-size:.56rem;font-weight:700;letter-spacing:.04em}
+.row-num{color:var(--a3);font-weight:700}
+
+/* ── Mobile Responsive ── */
+@media(max-width:640px){
+  header{padding:0 14px;height:auto;min-height:56px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+  .logo-text h1{font-size:.78rem}
+  .hdr-right{gap:6px}
+  .timer{display:none}
+  main{padding:14px}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .kpi-val{font-size:1.55rem}
+  .kpi-val.small{font-size:1.1rem}
+  .kpi{padding:13px 13px 10px}
+  .card{padding:14px}
+  .bad-tbl,.ptbl{font-size:.62rem}
+  .refresh-btn span{display:none}
+}
+@media(max-width:400px){
+  .kpi-row{grid-template-columns:1fr}
+}
+
+/* ── Divider ── */
+.divider{border:none;border-top:1.5px solid var(--border);margin:2px 0}
+
+/* ── Setup Notice ── */
+.setup-notice{
+  background:#fff8e6;border:1.5px solid rgba(212,144,0,.3);border-radius:var(--r);
+  padding:14px 18px;font-size:.72rem;color:#6b5400;line-height:1.6;
+}
+.setup-notice code{background:rgba(0,0,0,.06);border-radius:4px;padding:1px 6px;font-family:var(--mono);font-size:.68rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <h1>Karnataka ST Marriage Incentive Scheme – Data Collection Monitor</h1>
+      <p>ST Welfare Dept · Christ University . KMEA</p>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="timer" id="nextRefresh">Next refresh in 60s</div>
+    <button class="refresh-btn" onclick="loadAll()">
+      <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      <span>Refresh Now</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="setup-notice" id="setupNotice">
+    ⚙️ <strong>One-time setup:</strong> open <code>ST_AppsScript_Code.gs</code>, paste it into the Apps Script editor bound to your ST "Form Responses 1" sheet, deploy it as a Web App, then replace <code>GAS_URL</code> near the top of this file's <code>&lt;script&gt;</code> tag with your deployment URL. Also install the <code>onFormSubmitTrigger</code> (on form submit) and <code>onEdit</code> triggers from the Apps Script Triggers menu so new rows get auto-audited.
+  </div>
+
+  <div class="status-bar">
+    <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>
+    <span id="statusText" class="s-load">Connecting to Database…</span>
+    <span style="margin-left:auto;font-size:.65rem;color:var(--muted)" id="lastUpdated"></span>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi" style="--kc:var(--a1)">
+      <div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="kpi-lbl">Total Responses</div>
+      <div class="kpi-val" id="kTotal">—</div>
+      <div class="kpi-sub">all districts · all schemes</div>
+    </div>
+    <div class="kpi" style="--kc:var(--a4)">
+      <div class="kpi-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="kpi-lbl">Today's Submissions</div>
+      <div class="kpi-val" id="kToday">—</div>
+      <div class="kpi-sub">surveys filed today</div>
+    </div>
+    <div class="kpi" style="--kc:var(--a2)">
+      <div class="kpi-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 018 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 018-8z"/></svg></div>
+      <div class="kpi-lbl">Districts Active</div>
+      <div class="kpi-val" id="kDist">—</div>
+      <div class="kpi-sub">of 31 Karnataka districts</div>
+    </div>
+    <div class="kpi" style="--kc:var(--a3)">
+      <div class="kpi-ico"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="kpi-lbl">Taluks Active</div>
+      <div class="kpi-val" id="kTaluksActive">—</div>
+      <div class="kpi-sub">taluks with 1+ responses</div>
+    </div>
+    <div class="kpi" style="--kc:var(--a5)">
+      <div class="kpi-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div class="kpi-lbl">Taluks Yet to Start</div>
+      <div class="kpi-val" id="kTaluksPending">—</div>
+      <div class="kpi-sub">taluks with 0 collected</div>
+    </div>
+    <div class="kpi" style="--kc:var(--a6)">
+      <div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <div class="kpi-lbl">Active Surveyors</div>
+      <div class="kpi-val" id="kSurveyors">—</div>
+      <div class="kpi-sub">field staff submitting</div>
+    </div>
+    <div class="kpi" style="--kc:var(--a4)">
+      <div class="kpi-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div>
+      <div class="kpi-lbl">Overall Progress</div>
+      <div class="kpi-val small" id="kProgress">—</div>
+      <div class="kpi-sub" id="kProgressPct">of total target</div>
+    </div>
+  </div>
+
+  <!-- Bad Rows Panel -->
+  <div class="bad-panel" id="badPanel" style="display:none">
+    <div class="card-hdr">
+      <div class="card-title" style="color:var(--a5)">⚠ Row Audit — Responses Not Counting Towards Targets</div>
+      <div class="card-badge" style="background:rgba(214,63,92,.08);color:var(--a5);border-color:rgba(214,63,92,.25)" id="badBadge">0 issues</div>
+    </div>
+    <div class="bad-count">
+      <span class="bc-red" id="bcRed">0 RED</span>
+      <span class="bc-yellow" id="bcYellow">0 YELLOW</span>
+      <span class="bc-note">RED = district/taluk unmatched &nbsp;|&nbsp; YELLOW = scheme mismatch</span>
+    </div>
+    <div style="overflow-x:auto;max-height:300px;overflow-y:auto">
+      <table class="bad-tbl">
+        <thead>
+          <tr>
+            <th>Sheet Row</th><th>App ID</th><th>Date</th><th>Severity</th>
+            <th>Matched District</th><th>Matched Taluk</th><th>Matched Scheme</th>
+            <th>Raw District</th><th>Raw Taluk</th><th>Reason</th>
+          </tr>
+        </thead>
+        <tbody id="badBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Timeline + Donut -->
+  <div class="g21">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Daily Submission Timeline</div>
+        <div class="card-badge" id="tlBadge">30 days</div>
+      </div>
+      <div class="tl-wrap" id="timelineChart"><div class="empty">Loading…</div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Scheme Distribution</div>
+        <div class="card-badge" id="schemeBadge">5 schemes</div>
+      </div>
+      <div class="donut-wrap" id="schemeDonut"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- District Gap + Surveyor Leaderboard -->
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">District Gap Analysis — Target vs Collected</div>
+        <div class="card-badge" id="gapBadge">All Districts</div>
+      </div>
+      <div class="gap-list" id="gapList"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Surveyor Leaderboard</div>
+        <div class="card-badge" id="svBadge">All time</div>
+      </div>
+      <div class="sv-toolbar">
+        <span class="sv-date-label">Date:</span>
+        <select class="sv-date-select" id="svDateSelect" onchange="onSurveyorFilterChange()">
+          <option value="">All dates</option>
+        </select>
+        <span class="sv-date-label">Show:</span>
+        <select class="sv-view-select" id="svViewSelect" onchange="onSurveyorFilterChange()">
+          <option value="top20">Top 20</option>
+          <option value="all">All Surveyors</option>
+        </select>
+      </div>
+      <div class="sv-list-scroll" id="surveyorList"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- District Heatmap -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-title">District Response Heatmap</div>
+      <div class="card-badge" id="hmBadge">Response density</div>
+    </div>
+    <div class="heatmap" id="districtHeatmap"><div class="empty">Loading…</div></div>
+  </div>
+
+  <!-- Progress Table -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-title">District · Taluk · Target vs Collected Progress</div>
+      <div class="card-badge" id="progBadge">All</div>
+    </div>
+    <div class="filter-row">
+      <select id="fDistrict" onchange="filterProgress()"><option value="">All Districts</option></select>
+      <select id="fScheme" onchange="filterProgress()">
+        <option value="">All Schemes</option>
+        <option>Inter-Caste</option><option>Inter Sub-Caste</option>
+        <option>Simple/Mass</option><option>Devadasi</option><option>Widow Remarriage</option>
+      </select>
+      <select id="fTier" onchange="filterProgress()">
+        <option value="">All Tiers</option><option>High</option><option>Medium</option><option>Low</option>
+      </select>
+      <select id="fStatus" onchange="filterProgress()">
+        <option value="">All Progress</option>
+        <option value="started">Being Collected (1+)</option>
+        <option value="zero">Yet to Start (0)</option>
+        <option value="hi">Over 80% done</option>
+        <option value="mid">20–79%</option>
+        <option value="lo">Below 20%</option>
+      </select>
+    </div>
+    <div class="tbl-scroll">
+      <table class="ptbl">
+        <thead>
+          <tr>
+            <th>District</th><th>Taluk</th><th>Scheme</th><th>Tier</th>
+            <th>Target</th><th>Collected</th><th>Remaining</th><th style="min-width:150px">Progress</th>
+          </tr>
+        </thead>
+        <tbody id="progBody"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// PASTE YOUR ST APPS SCRIPT WEB APP DEPLOYMENT URL BELOW
+// (Deploy ST_AppsScript_Code.gs as a Web App: Execute as Me, Anyone can access)
+// ══════════════════════════════════════════════════════════════
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxNlYc9weszs4E5DAyfOMCDf7dHLQnfploW-5EyrXVAyMU56BzCPmFpjmjD90FrAh-d9g/exec';
+
+const SC = {
+  'Inter-Caste':     '#1f7a3d',
+  'Inter Sub-Caste': '#7c5cbf',
+  'Simple/Mass':     '#0ea5b0',
+  'Devadasi':        '#d63f5c',
+  'Widow Remarriage':'#d49000',
+  'Other':           '#8a95a8'
+};
+
+let progressData = [];
+let timerSec = 60, timerInterval;
+let allSurveyorData = {};
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (!GAS_URL || GAS_URL.indexOf('PASTE_YOUR') === 0) {
+    setStatus('Set GAS_URL in the script tag to your deployed ST Apps Script Web App URL.', 's-err');
+    return;
+  }
+  document.getElementById('setupNotice').style.display = 'none';
+  loadAll(); startTimer();
+});
+
+function startTimer() {
+  clearInterval(timerInterval); timerSec = 60;
+  timerInterval = setInterval(() => {
+    timerSec--;
+    document.getElementById('nextRefresh').textContent = `Next refresh in ${timerSec}s`;
+    if (timerSec <= 0) { loadAll(); timerSec = 60; }
+  }, 1000);
+}
+
+function setStatus(msg, cls='s-load') {
+  const el = document.getElementById('statusText');
+  el.className = cls; el.textContent = msg;
+}
+
+async function gasGet(action, extra='') {
+  const url = `${GAS_URL}?action=${action}${extra}&_=${Date.now()}`;
+  const res  = await fetch(url, { cache: 'no-store' });
+  const json = await res.json();
+  if (json.status !== 'ok') throw new Error(json.message || 'API error');
+  return json.data;
+}
+
+async function loadAll() {
+  setStatus('Fetching live data from Database…', 's-load');
+  startTimer();
+  try {
+    const [summary, progress, timeline, badRows, surveyorDates] = await Promise.all([
+      gasGet('summary'),
+      gasGet('progress'),
+      gasGet('timeline'),
+      gasGet('bad_rows').catch(() => []),
+      gasGet('survey_dates').catch(() => [])
+    ]);
+
+    progressData = progress;
+    const defaultDate = populateSurveyorDates(surveyorDates);
+    const surveyors = await gasGet('surveyor', defaultDate ? `&date=${encodeURIComponent(defaultDate)}` : '');
+    allSurveyorData = surveyors;
+
+    renderKPIs(summary, progress, surveyors);
+    renderTimeline(timeline);
+    renderSchemeDonut(summary.scheme_breakdown || {});
+    renderGapAnalysis(progress);
+    renderSurveyors(surveyors, defaultDate, document.getElementById('svViewSelect').value);
+    renderHeatmap(summary.district_breakdown || {});
+    renderProgress(progress);
+    renderBadRows(badRows || []);
+    populateDistrictFilter(progress);
+
+    document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+    setStatus(`Connected · ${summary.total_responses} responses · synced ${new Date().toLocaleTimeString()}`, 's-ok');
+  } catch(e) {
+    setStatus(`Connection error: ${e.message}`, 's-err');
+  }
+}
+
+async function onSurveyorFilterChange() {
+  const selectedDate = document.getElementById('svDateSelect').value;
+  const viewMode = document.getElementById('svViewSelect').value;
+  document.getElementById('surveyorList').innerHTML = '<div class="empty">Loading…</div>';
+  try {
+    const surveyors = await gasGet('surveyor', selectedDate ? `&date=${encodeURIComponent(selectedDate)}` : '');
+    allSurveyorData = surveyors;
+    renderSurveyors(surveyors, selectedDate, viewMode);
+  } catch(e) {
+    document.getElementById('surveyorList').innerHTML = `<div class="empty">Error: ${e.message}</div>`;
+  }
+}
+
+function populateSurveyorDates(dates) {
+  const sel = document.getElementById('svDateSelect');
+  const previousValue = sel.value;
+  const hadUserChoice = previousValue !== '';
+  while (sel.options.length > 1) sel.remove(1);
+  const sorted = (dates || []).slice().sort((a, b) => b.localeCompare(a));
+  sorted.forEach(d => {
+    const o = document.createElement('option');
+    o.value = d;
+    try {
+      const dt = new Date(d + 'T00:00:00');
+      o.textContent = dt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    } catch(e) { o.textContent = d; }
+    sel.appendChild(o);
+  });
+  if (hadUserChoice && [...sel.options].some(o => o.value === previousValue)) {
+    sel.value = previousValue; return previousValue;
+  }
+  if (sorted.length > 0) { sel.value = sorted[0]; return sorted[0]; }
+  sel.value = ''; return '';
+}
+
+function renderKPIs(s, progress, surveyors) {
+  document.getElementById('kTotal').textContent     = (s.total_responses||0).toLocaleString();
+  document.getElementById('kToday').textContent     = (s.today_responses||0).toLocaleString();
+  document.getElementById('kDist').textContent      = Object.keys(s.district_breakdown||{}).length;
+  document.getElementById('kSurveyors').textContent = Object.keys(surveyors||{}).length;
+  const allTaluks    = new Set(progress.map(r => r.district + '|' + r.taluk));
+  const activeTaluks = new Set(progress.filter(r => r.completed > 0).map(r => r.district + '|' + r.taluk));
+  document.getElementById('kTaluksActive').textContent  = activeTaluks.size;
+  document.getElementById('kTaluksPending').textContent = allTaluks.size - activeTaluks.size;
+  const tot  = progress.reduce((a,r) => a + r.target, 0);
+  const done = progress.reduce((a,r) => a + r.completed, 0);
+  document.getElementById('kProgress').textContent    = tot > 0 ? `${done.toLocaleString()} / ${tot.toLocaleString()}` : '—';
+  document.getElementById('kProgressPct').textContent = tot > 0 ? `${Math.round((done/tot)*100)}% of total target` : 'of total target';
+}
+
+function renderTimeline(data) {
+  const el = document.getElementById('timelineChart');
+  if (!data||!data.length) { el.innerHTML='<div class="empty">No timeline data yet</div>'; return; }
+  const last = data.slice(-40);
+  const max  = Math.max(...last.map(d=>d.count), 1);
+  document.getElementById('tlBadge').textContent = `${last.length} days`;
+  el.innerHTML = last.map(d => {
+    const h = Math.max(4, Math.round((d.count/max)*88));
+    return `<div class="tl-col">
+      <div class="tl-cnt">${d.count}</div>
+      <div class="tl-bar" style="height:${h}px" title="${d.date}: ${d.count} responses"></div>
+      <div class="tl-lbl">${d.date.slice(5)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderSchemeDonut(data) {
+  const el = document.getElementById('schemeDonut');
+  const entries = Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  if (!entries.length) { el.innerHTML='<div class="empty">No scheme data yet</div>'; return; }
+  const total = entries.reduce((s,[,v])=>s+v,0)||1;
+  document.getElementById('schemeBadge').textContent = `${entries.length} schemes · ${total} total`;
+  const R=54,r=34,cx=70,cy=70;
+  let startAngle=-Math.PI/2, paths='';
+  entries.forEach(([name,cnt])=>{
+    const angle=(cnt/total)*2*Math.PI;
+    const x1=cx+R*Math.cos(startAngle),y1=cy+R*Math.sin(startAngle);
+    const x2=cx+R*Math.cos(startAngle+angle),y2=cy+R*Math.sin(startAngle+angle);
+    const xi1=cx+r*Math.cos(startAngle+angle),yi1=cy+r*Math.sin(startAngle+angle);
+    const xi2=cx+r*Math.cos(startAngle),yi2=cy+r*Math.sin(startAngle);
+    const lg=angle>Math.PI?1:0;
+    const col=SC[name]||'#8a95a8';
+    paths+=`<path d="M${x1},${y1} A${R},${R} 0 ${lg},1 ${x2},${y2} L${xi1},${yi1} A${r},${r} 0 ${lg},0 ${xi2},${yi2} Z" fill="${col}" opacity=".9"><title>${name}: ${cnt}</title></path>`;
+    startAngle+=angle;
+  });
+  el.innerHTML=`<svg width="140" height="140" viewBox="0 0 140 140">
+    ${paths}
+    <text x="70" y="66" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="20" font-weight="800" fill="#1a2035">${total}</text>
+    <text x="70" y="80" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#8a95a8">TOTAL</text>
+  </svg>
+  <div class="donut-legend">${entries.map(([name,cnt])=>{
+    const col=SC[name]||'#8a95a8';
+    return `<div class="dl-row">
+      <div class="dl-dot" style="background:${col}"></div>
+      <div class="dl-name">${name}</div>
+      <div class="dl-val" style="color:${col}">${cnt}</div>
+      <div class="dl-pct">${Math.round((cnt/total)*100)}%</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderGapAnalysis(progress) {
+  const el = document.getElementById('gapList');
+  if (!progress||!progress.length) { el.innerHTML='<div class="empty">No data yet</div>'; return; }
+  const byDist = {};
+  progress.forEach(r => {
+    if (!byDist[r.district]) byDist[r.district] = { target:0, completed:0 };
+    byDist[r.district].target    += r.target;
+    byDist[r.district].completed += r.completed;
+  });
+  const entries = Object.entries(byDist)
+    .map(([d,v]) => ({ d, ...v, pct: v.target > 0 ? Math.round((v.completed/v.target)*100) : 0 }))
+    .sort((a,b) => a.pct - b.pct);
+  document.getElementById('gapBadge').textContent = `${entries.length} districts`;
+  el.innerHTML = entries.map(e => {
+    const col = e.pct>=80?'var(--a4)':e.pct>=40?'var(--a1)':e.pct>0?'var(--a5)':'var(--muted)';
+    const rem = e.target - e.completed;
+    return `<div class="gap-row">
+      <div class="gap-top">
+        <div class="gap-name" title="${e.d}">${e.d}</div>
+        <div class="gap-nums">
+          <span class="gap-done">${e.completed}</span>
+          <span style="color:var(--border2)">/</span>
+          <span style="color:var(--muted)">${e.target}</span>
+          <span class="gap-rem">−${rem}</span>
+          <span class="gap-pct">${e.pct}%</span>
+        </div>
+      </div>
+      <div class="gap-bars">
+        <div class="gap-filled" style="width:${e.pct}%;background:${col}"></div>
+        <div class="gap-empty" style="width:${100-e.pct}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSurveyors(data, selectedDate, viewMode) {
+  const el = document.getElementById('surveyorList');
+  const allEntries = Object.entries(data).sort((a,b) => b[1].count - a[1].count);
+  const showAll = viewMode === 'all';
+  const entries = showAll ? allEntries : allEntries.slice(0, 20);
+
+  if (!entries.length) {
+    el.innerHTML = `<div class="empty">${selectedDate ? 'No submissions on this date' : 'No surveyor data yet'}</div>`;
+    return;
+  }
+  const max = allEntries[0]?.[1]?.count || 1;
+  const totalSurveyors = allEntries.length;
+  const totalCount = allEntries.reduce((s,v) => s + v[1].count, 0);
+
+  document.getElementById('svBadge').textContent = showAll
+    ? `${totalSurveyors} surveyors · ${totalCount} total`
+    : `Top 20 of ${totalSurveyors} · ${totalCount} total`;
+
+  el.innerHTML = entries.map(([name, info], i) => {
+    const distList = (info.districts||[]).slice(0,3).join(', ');
+    const extra    = (info.districts||[]).length > 3 ? ` +${info.districts.length-3}` : '';
+    const lastSub  = info.last_submission ? info.last_submission.slice(5) : '—';
+    const barPct   = Math.round((info.count/max)*100);
+    const displayName = (name && name.trim() !== '' && name !== 'undefined' && name !== 'null')
+      ? name.trim()
+      : `(no name · row ${info.first_row || '?'})`;
+    const rankClass = i < 3 ? 'sv-rank top3' : 'sv-rank';
+    return `<div class="sv-row">
+      <div class="${rankClass}">#${i+1}</div>
+      <div class="sv-info">
+        <div class="sv-name" title="${displayName}">${displayName}</div>
+        <div class="sv-meta">${distList}${extra}${!selectedDate ? ` · last: ${lastSub}` : ''}</div>
+      </div>
+      <div class="sv-bar-wrap"><div class="sv-bar" style="width:${barPct}%"></div></div>
+      <div class="sv-count">${info.count}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderHeatmap(data) {
+  const el=document.getElementById('districtHeatmap');
+  const entries=Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  const max=entries[0]?.[1]||1;
+  const total=entries.reduce((s,[,v])=>s+v,0)||1;
+  if (!entries.length) { el.innerHTML='<div class="empty">No district data yet</div>'; return; }
+  document.getElementById('hmBadge').textContent=`${entries.length} districts`;
+  el.innerHTML=entries.map(([d,c])=>{
+    const inten=c/max;
+    const bg=`rgba(31,122,61,${0.07+inten*.46})`;
+    const brd=`rgba(31,122,61,${0.15+inten*.45})`;
+    const textCol=inten>.55?'#0f4a24':inten>.25?'#1f7a3d':'#6b7280';
+    return `<div class="hm-chip" title="${d}: ${c} responses (${Math.round((c/total)*100)}%)"
+      style="background:${bg};border-color:${brd}">
+      <div class="hm-name" style="color:${textCol}">${d}</div>
+      <div class="hm-val" style="color:${textCol}">${c}<span style="font-size:.52rem;opacity:.65"> resp</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderBadRows(rows) {
+  const panel = document.getElementById('badPanel');
+  if (!rows||!rows.length) { panel.style.display='none'; return; }
+  panel.style.display='block';
+  const reds    = rows.filter(r=>r.severity==='RED');
+  const yellows = rows.filter(r=>r.severity==='YELLOW');
+  document.getElementById('badBadge').textContent = `${rows.length} issue${rows.length!==1?'s':''}`;
+  document.getElementById('bcRed').textContent    = `${reds.length} RED — Unmatched`;
+  document.getElementById('bcYellow').textContent = `${yellows.length} YELLOW — Scheme mismatch`;
+  document.getElementById('badBody').innerHTML = rows.map(r => `<tr>
+    <td class="row-num">Row ${r.row}</td>
+    <td style="color:var(--text)">${r.app_id||'—'}</td>
+    <td style="color:var(--muted)">${r.timestamp||'—'}</td>
+    <td><span class="${r.severity==='RED'?'sev-red':'sev-yellow'}">${r.severity}</span></td>
+    <td style="color:var(--a2)">${r.district}</td>
+    <td style="color:var(--a2)">${r.taluk}</td>
+    <td style="color:${SC[r.scheme]||'#aaa'}">${r.scheme}</td>
+    <td style="color:var(--muted)">${r.raw_dist||'—'}</td>
+    <td style="color:var(--muted)">${r.raw_taluk||'—'}</td>
+    <td style="color:var(--a5);font-size:.6rem;white-space:normal;max-width:200px">${r.reason}</td>
+  </tr>`).join('');
+}
+
+function renderProgress(data) { progressData=data; filterProgress(); }
+
+function filterProgress() {
+  const df  = document.getElementById('fDistrict').value;
+  const sf  = document.getElementById('fScheme').value;
+  const tf  = document.getElementById('fTier').value;
+  const stf = document.getElementById('fStatus').value;
+  let rows  = progressData.filter(r => {
+    if (df  && r.district!==df) return false;
+    if (sf  && r.scheme!==sf)   return false;
+    if (tf  && r.tier!==tf)     return false;
+    if (stf==='started' && r.completed<1)                     return false;
+    if (stf==='zero'    && r.completed>0)                     return false;
+    if (stf==='hi'      && r.pct_done<80)                     return false;
+    if (stf==='mid'     && (r.pct_done<20||r.pct_done>=80))   return false;
+    if (stf==='lo'      && r.pct_done>=20)                    return false;
+    return true;
+  });
+
+  document.getElementById('progBadge').textContent = `${rows.length} rows`;
+  const tbody = document.getElementById('progBody');
+  if (!rows.length) { tbody.innerHTML='<tr><td colspan="8" class="empty">No matching records</td></tr>'; return; }
+
+  const subtotalMap = {};
+  rows.forEach(r => {
+    const key = r.district + '||' + r.scheme;
+    if (!subtotalMap[key]) subtotalMap[key] = { district: r.district, scheme: r.scheme, target: 0, completed: 0 };
+    subtotalMap[key].target    += r.target;
+    subtotalMap[key].completed += r.completed;
+  });
+
+  const sorted = [...rows].sort((a,b) => {
+    if (a.district !== b.district) return a.district.localeCompare(b.district);
+    if (a.scheme   !== b.scheme)   return a.scheme.localeCompare(b.scheme);
+    return a.taluk.localeCompare(b.taluk);
+  });
+
+  let html = '';
+  const processedSubtotals = new Set();
+
+  sorted.forEach((r, idx) => {
+    const dsKey = r.district + '||' + r.scheme;
+    const nextRow = sorted[idx + 1];
+    const nextDsKey = nextRow ? (nextRow.district + '||' + nextRow.scheme) : null;
+
+    const col = r.pct_done>=80?'var(--a4)':r.pct_done>=40?'var(--a1)':r.completed>0?'var(--a5)':'var(--muted)';
+    const sc  = SC[r.scheme]||'#aaa';
+
+    html += `<tr>
+      <td style="font-weight:600">${r.district}</td>
+      <td style="color:var(--text2)">${r.taluk}</td>
+      <td><span style="color:${sc};font-weight:600">${r.scheme}</span></td>
+      <td><span class="tier-b t-${r.tier[0]}">${r.tier}</span></td>
+      <td style="font-family:var(--mono);font-weight:600">${r.target}</td>
+      <td style="font-family:var(--mono);font-weight:700;color:${col}">${r.completed}</td>
+      <td style="font-family:var(--mono);color:var(--muted)">${r.remaining}</td>
+      <td><div class="pbar-w">
+        <div class="pbar"><div class="pbar-f" style="width:${r.pct_done}%;background:${col}"></div></div>
+        <div class="pct-lbl" style="color:${col}">${r.pct_done}%</div>
+      </div></td>
+    </tr>`;
+
+    if (dsKey !== nextDsKey && !processedSubtotals.has(dsKey)) {
+      processedSubtotals.add(dsKey);
+      const sub = subtotalMap[dsKey];
+      const subDone = sub.completed;
+      const subTarget = sub.target;
+      const subRem = Math.max(0, subTarget - subDone);
+      const subPct = subTarget > 0 ? Math.min(100, Math.round((subDone / subTarget) * 100)) : 0;
+      const subCol = subPct>=80?'var(--a4)':subPct>=40?'var(--a1)':subDone>0?'var(--a5)':'var(--muted)';
+      const subSc  = SC[sub.scheme]||'#aaa';
+
+      html += `<tr class="dist-subtotal">
+        <td style="color:var(--a3)">${sub.district} <span class="dist-sub-label">TOTAL</span></td>
+        <td style="color:var(--muted);font-size:.62rem;font-style:italic">all taluks</td>
+        <td><span style="color:${subSc};font-weight:700">${sub.scheme}</span></td>
+        <td style="color:var(--muted)">—</td>
+        <td style="font-family:var(--mono);font-weight:700;color:var(--text)">${subTarget}</td>
+        <td style="font-family:var(--mono);font-weight:700;color:${subCol}">${subDone}</td>
+        <td style="font-family:var(--mono);font-weight:600;color:var(--muted)">${subRem}</td>
+        <td><div class="pbar-w">
+          <div class="pbar" style="height:8px"><div class="pbar-f" style="width:${subPct}%;background:${subCol};height:8px"></div></div>
+          <div class="pct-lbl" style="color:${subCol};font-size:.68rem">${subPct}%</div>
+        </div></td>
+      </tr>`;
+    }
+  });
+
+  tbody.innerHTML = html;
+}
+
+function populateDistrictFilter(progress) {
+  const sel = document.getElementById('fDistrict');
+  const existing = new Set([...sel.options].map(o=>o.value));
+  [...new Set(progress.map(r=>r.district))].sort().forEach(d => {
+    if (!existing.has(d)) {
+      const o = document.createElement('option');
+      o.value = o.textContent = d;
+      sel.appendChild(o);
+    }
+  });
+}
+</script>
+</body>
+</html>
