@@ -264,6 +264,59 @@ main{max-width:1800px;margin:0 auto;padding:24px 28px;display:flex;flex-directio
 /* ── Divider ── */
 .divider{border:none;border-top:1.5px solid var(--border);margin:2px 0}
 
+/* ── Photo Gallery ── */
+.gallery-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.gallery-toolbar select{
+  background:var(--bg);border:1.5px solid var(--border);color:var(--text);
+  border-radius:7px;padding:6px 10px;font-family:var(--mono);font-size:.65rem;cursor:pointer;font-weight:500;
+}
+.gallery-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;
+  max-height:520px;overflow-y:auto;padding-right:4px;
+}
+.gallery-grid::-webkit-scrollbar{width:5px}
+.gallery-grid::-webkit-scrollbar-track{background:var(--bg)}
+.gallery-grid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.gphoto{
+  border:1.5px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;
+  background:var(--surf2);transition:transform .15s,box-shadow .15s,border-color .15s;
+  display:flex;flex-direction:column;
+}
+.gphoto:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--a2)}
+.gphoto-img-wrap{width:100%;aspect-ratio:1/1;background:#eef1f5;overflow:hidden;position:relative}
+.gphoto-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.gphoto-img-wrap .gphoto-fallback{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:.6rem;font-family:var(--mono);text-align:center;padding:8px;
+}
+.gphoto-cap{padding:7px 9px;display:flex;flex-direction:column;gap:2px}
+.gphoto-names{font-size:.63rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gphoto-meta{font-size:.55rem;color:var(--muted);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── Lightbox ── */
+.lightbox-overlay{
+  position:fixed;inset:0;background:rgba(10,14,26,.85);z-index:1000;
+  display:none;align-items:center;justify-content:center;padding:24px;
+  backdrop-filter:blur(4px);
+}
+.lightbox-overlay.open{display:flex}
+.lightbox-box{
+  background:var(--surf);border-radius:14px;max-width:min(680px,92vw);max-height:90vh;
+  overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.lightbox-img-wrap{background:#111;display:flex;align-items:center;justify-content:center;max-height:60vh;overflow:hidden}
+.lightbox-img-wrap img{max-width:100%;max-height:60vh;object-fit:contain}
+.lightbox-info{padding:16px 20px;display:flex;flex-direction:column;gap:6px}
+.lightbox-row{display:flex;justify-content:space-between;font-size:.72rem;gap:10px}
+.lightbox-row span:first-child{color:var(--muted);font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.06em}
+.lightbox-row span:last-child{color:var(--text);font-weight:600;text-align:right}
+.lightbox-actions{display:flex;gap:8px;padding:0 20px 18px}
+.lightbox-actions a, .lightbox-close{
+  flex:1;text-align:center;padding:8px 14px;border-radius:8px;font-size:.7rem;font-weight:600;
+  text-decoration:none;cursor:pointer;border:1.5px solid var(--border2);color:var(--text);background:var(--bg);
+}
+.lightbox-actions a{background:var(--a2);border-color:var(--a2);color:#fff}
+
 /* ── Setup Notice ── */
 .setup-notice{
   background:#fff8e6;border:1.5px solid rgba(212,144,0,.3);border-radius:var(--r);
@@ -352,6 +405,12 @@ main{max-width:1800px;margin:0 auto;padding:24px 28px;display:flex;flex-directio
       <div class="kpi-val small" id="kProgress">—</div>
       <div class="kpi-sub" id="kProgressPct">of total target</div>
     </div>
+    <div class="kpi" style="--kc:var(--a2)">
+      <div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+      <div class="kpi-lbl">Photos Uploaded</div>
+      <div class="kpi-val small" id="kPhotos">—</div>
+      <div class="kpi-sub" id="kPhotosSub">of consented responses</div>
+    </div>
   </div>
 
   <!-- Bad Rows Panel -->
@@ -436,6 +495,25 @@ main{max-width:1800px;margin:0 auto;padding:24px 28px;display:flex;flex-directio
     <div class="heatmap" id="districtHeatmap"><div class="empty">Loading…</div></div>
   </div>
 
+  <!-- Photo Gallery -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-title">Geo-Tagged Photo Gallery</div>
+      <div class="card-badge" id="galleryBadge">Loading…</div>
+    </div>
+    <div class="gallery-toolbar">
+      <select id="galleryDistrictSelect" onchange="onGalleryFilterChange()">
+        <option value="">All Districts</option>
+      </select>
+      <select id="galleryLimitSelect" onchange="onGalleryFilterChange()">
+        <option value="60">Latest 60</option>
+        <option value="150">Latest 150</option>
+        <option value="99999">All with photos</option>
+      </select>
+    </div>
+    <div class="gallery-grid" id="photoGallery"><div class="empty">Loading…</div></div>
+  </div>
+
   <!-- Progress Table -->
   <div class="card">
     <div class="card-hdr">
@@ -474,6 +552,18 @@ main{max-width:1800px;margin:0 auto;padding:24px 28px;display:flex;flex-directio
     </div>
   </div>
 </main>
+
+<!-- Photo Lightbox -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="if(event.target===this) closeLightbox()">
+  <div class="lightbox-box">
+    <div class="lightbox-img-wrap"><img id="lightboxImg" src="" alt="Geo-tagged photo"/></div>
+    <div class="lightbox-info" id="lightboxInfo"></div>
+    <div class="lightbox-actions">
+      <a id="lightboxOpen" href="#" target="_blank" rel="noopener">Open Full Size</a>
+      <span class="lightbox-close" onclick="closeLightbox()">Close</span>
+    </div>
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════════════════════════
@@ -552,6 +642,8 @@ async function loadAll() {
     renderProgress(progress);
     renderBadRows(badRows || []);
     populateDistrictFilter(progress);
+    populateGalleryDistrictFilter(progress);
+    loadGallery();
 
     document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
     setStatus(`Connected · ${summary.total_responses} responses · synced ${new Date().toLocaleTimeString()}`, 's-ok');
@@ -608,6 +700,16 @@ function renderKPIs(s, progress, surveyors) {
   const done = progress.reduce((a,r) => a + r.completed, 0);
   document.getElementById('kProgress').textContent    = tot > 0 ? `${done.toLocaleString()} / ${tot.toLocaleString()}` : '—';
   document.getElementById('kProgressPct').textContent = tot > 0 ? `${Math.round((done/tot)*100)}% of total target` : 'of total target';
+
+  const photos = s.photos_uploaded || 0;
+  const consentYes = s.photo_consent_yes || 0;
+  document.getElementById('kPhotos').textContent = photos.toLocaleString();
+  if (consentYes > 0) {
+    const pct = Math.round((photos / consentYes) * 100);
+    document.getElementById('kPhotosSub').textContent = `${pct}% of ${consentYes} consented`;
+  } else {
+    document.getElementById('kPhotosSub').textContent = 'of consented responses';
+  }
 }
 
 function renderTimeline(data) {
@@ -879,6 +981,92 @@ function populateDistrictFilter(progress) {
       sel.appendChild(o);
     }
   });
+}
+
+// ══════════════════════════════════════════════════════════════
+// PHOTO GALLERY
+// ══════════════════════════════════════════════════════════════
+function populateGalleryDistrictFilter(progress) {
+  const sel = document.getElementById('galleryDistrictSelect');
+  const existing = new Set([...sel.options].map(o=>o.value));
+  [...new Set(progress.map(r=>r.district))].sort().forEach(d => {
+    if (!existing.has(d)) {
+      const o = document.createElement('option');
+      o.value = o.textContent = d;
+      sel.appendChild(o);
+    }
+  });
+}
+
+async function loadGallery() {
+  const el = document.getElementById('photoGallery');
+  el.innerHTML = '<div class="empty">Loading…</div>';
+  const limit = document.getElementById('galleryLimitSelect').value || 60;
+  try {
+    const photos = await gasGet('photos', `&limit=${limit}`);
+    renderGallery(photos || []);
+  } catch(e) {
+    el.innerHTML = `<div class="empty">Error loading photos: ${e.message}</div>`;
+  }
+}
+
+function onGalleryFilterChange() { loadGallery(); }
+
+let currentGalleryPhotos = [];
+
+function renderGallery(photos) {
+  currentGalleryPhotos = photos;
+  const districtFilter = document.getElementById('galleryDistrictSelect').value;
+  const filtered = districtFilter ? photos.filter(p => p.district === districtFilter) : photos;
+
+  document.getElementById('galleryBadge').textContent = `${filtered.length} photo${filtered.length!==1?'s':''}`;
+  const el = document.getElementById('photoGallery');
+
+  if (!filtered.length) {
+    el.innerHTML = '<div class="empty">No geo-tagged photos uploaded yet</div>';
+    return;
+  }
+
+  el.innerHTML = filtered.map((p, i) => {
+    const names = [p.husband, p.wife].filter(Boolean).join(' & ') || (p.app_id || 'Applicant');
+    const date = p.timestamp ? String(p.timestamp).slice(0,10) : '—';
+    return `<div class="gphoto" onclick="openLightbox(${i}, '${districtFilter ? 'filtered' : 'all'}')">
+      <div class="gphoto-img-wrap">
+        <img src="${p.thumb}" loading="lazy" alt="Geo-tagged photo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
+        <div class="gphoto-fallback" style="display:none">Preview unavailable<br/>(tap to open)</div>
+      </div>
+      <div class="gphoto-cap">
+        <div class="gphoto-names" title="${names}">${names}</div>
+        <div class="gphoto-meta">${p.district} · ${date}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // stash the filtered list for lightbox lookups
+  renderGallery._filtered = filtered;
+}
+
+function openLightbox(index) {
+  const list = renderGallery._filtered || currentGalleryPhotos;
+  const p = list[index];
+  if (!p) return;
+  const names = [p.husband, p.wife].filter(Boolean).join(' & ') || (p.app_id || 'Applicant');
+  document.getElementById('lightboxImg').src = p.thumb;
+  document.getElementById('lightboxOpen').href = p.view;
+  document.getElementById('lightboxInfo').innerHTML = `
+    <div class="lightbox-row"><span>Applicants</span><span>${names}</span></div>
+    <div class="lightbox-row"><span>District / Taluk</span><span>${p.district} / ${p.taluk}</span></div>
+    <div class="lightbox-row"><span>Scheme</span><span>${p.scheme}</span></div>
+    <div class="lightbox-row"><span>Date</span><span>${p.timestamp ? String(p.timestamp).slice(0,10) : '—'}</span></div>
+    <div class="lightbox-row"><span>Surveyor</span><span>${p.surveyor || '—'}</span></div>
+    <div class="lightbox-row"><span>App ID</span><span>${p.app_id || '—'}</span></div>
+  `;
+  document.getElementById('lightboxOverlay').classList.add('open');
+}
+
+function closeLightbox() {
+  document.getElementById('lightboxOverlay').classList.remove('open');
 }
 </script>
 </body>
